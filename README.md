@@ -1,3 +1,3 @@
 # julia_manual_summary
 
-このリポジトリはJuliaの公式ドキュメントの要約です。
+このリポジトリはJuliaの[公式ドキュメント](https://docs.julialang.org/en/v1/)の要約です。
