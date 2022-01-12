@@ -232,9 +232,6 @@ Juliaでは変数の直前に数値リテラルを書くことで、暗黙にそ
 > x(x - 1)
 ERROR: MethodError: objects of type Int64 are not callable
 Maybe you forgot to use an operator such as *, ^, %, / etc. ?
-Stacktrace:
- [1] top-level scope
-   @ REPL[21]:1
    
 > y = 4; xy
 ERROR: UndefVarError: xy not defined
