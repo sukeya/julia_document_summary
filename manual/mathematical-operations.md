@@ -145,3 +145,36 @@ true
 ## 初等関数
 意味がある型で初等関数が定義されている。
 ドット演算子を使用可能。
+
+## 演算子の優先順位
+詳細は[src/julia-parser.scm](https://github.com/JuliaLang/julia/blob/master/src/julia-parser.scm)にて。
+演算子の優先順位はBase.operator_precedence関数で確認できる。
+```
+> Base.operator_precedence(:+), Base.operator_precedence(:sin)
+(11, 0)
+```
+0は有効でない演算子を表す。
+
+演算子の結合性(変数の右につくか、左につくか)はBase.operator_associativity関数で確認できる。
+```
+> Base.operator_associativity(:-), Base.operator_associativity(:+), Base.operator_associativity(:^)
+(:left, :none, :right)
+```
+有効でない演算子の結合性はnone。
+
+数値リテラル係数はべき乗につける場合(例 2x^2)を除いて全ての二項演算子より高い優先度を持つ。
+
+## 数値の変換
+Juliaは3つの数値の変換方法があり、違いは不正確な変換の扱いである。
+以下、xを型Tに変換するとする。
+1. T(x) または convert(T, x)
+  - Tが浮動小数点数型 ... もっとも近い表現可能な値に変換される。+∞、-∞もありうる。
+  - Tが整数型 ... xがTで表現できないなら、InexactErrorを投げる。
+2. x % T ... 整数xを整数型Tに2^n(nはTのビット数)を法として変換する。つまり、二進数表現でTのビット数以上のビットは捨てる。
+3. 丸め関数を使う ... 表現可能な範囲からでるとInexactErrorを投げる。
+```
+> round(Int8, 127.4)
+127
+```
+
+関数の一覧は省略。
