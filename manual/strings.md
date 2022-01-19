@@ -132,3 +132,46 @@ ERROR: BoundsError: attempt to access 4-codeunit String at index [0]
 SubString{String}
 ```
 
+## 文字のエンコードについて
+詳しくは[Character encoding](https://en.wikipedia.org/wiki/Character_encoding)のTerminology節を参照。
+次の節から文字のエンコードの話が始まるため、用語を簡潔に説明する。
+- コードポイントとは、\\U0041などそのエンコーディングで許可された整数値を指す。
+- コードユニットとは、文字をエンコードするために使われるビット列を指す。
+
+例として、"abc\U10400"を考える。この文字列のUTF-8, 16, 32のコードユニットは以下の通り。
+
+| エンコーディング | コードユニット                            |
+| -------------- | ---------------------------------------- |
+| UTF-32         | (00000061, 00000062, 00000063, 00010400) |
+| UTF-16         | (0061, 0062, 0063, d801, dc00)           |
+| UTF-8          | (61, 62, 63, f0, 90, 90, 80)             |
+
+コードポイント数は全て4である。
+
+## ユニコードとUTF-8
+文字列リテラルはUTF-8でエンコードされる。
+
+文字列のインデックスはコードユニット単位(UTF-8の場合はバイト単位)なので、有効でないバイトを指定してしまう可能性がある。その場合、例外が投げられる。
+```
+> s = "\u2200 x \u2203 y"
+"∀ x ∃ y"
+
+> s[1]
+'∀': Unicode U+2200 (category Sm: Symbol, math)
+
+> s[2]
+ERROR: StringIndexError: invalid index [2], valid nearby indices [1]=>'∀', [4]=>' '
+```
+
+nextind(s, 1)で文字列sのインデックス1の次の文字のインデックスをとれる。前はprevind関数。
+```
+> nextind(s, 1)
+4
+
+> s[prevind(s, end, 2)]    # 最後の2は2つ前という意味
+'∃': Unicode U+2203 (category Sm: Symbol, math)
+
+> prevind(s, lastindex(s))
+10
+```
+```
